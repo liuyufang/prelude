@@ -1,20 +1,90 @@
-(setq mac-command-modifier 'meta)
-(setq mac-option-modifier 'super)
+;; debug
+;; show backtrace when error
+(setq debug-on-error t)
 
-(defun require-package (package &optional min-version no-refresh)
-  "Install given PACKAGE, optionally requiring MIN-VERSION.
-If NO-REFRESH is non-nil, the available package lists will not be
-re-downloaded in order to locate PACKAGE."
-  (if (package-installed-p package min-version)
-      t
-    (if (or (assoc package package-archive-contents) no-refresh)
-        (package-install package)
-      (progn
-        (package-refresh-contents)
-        (require-package package min-version t)))))
+;; 关闭flx-ido-mode，因为按左右键选择文件或buffer时，Emacs无限占用内存，从几十M吃到2G多，最后死掉
+(flx-ido-mode -1)
+
+;; swap Command and Option
+;; (setq mac-command-modifier 'meta)
+;; (setq mac-option-modifier 'super)
 
 ;; set font size, 13pt
 (set-face-attribute 'default nil :height 130)
+
+;; 完全禁止beep
+(setq ring-bell-function (lambda () ()))
+
+;; hide scroll bar
+(when (fboundp 'toggle-scroll-bar) (toggle-scroll-bar -1))
+
+;; Allow access from emacsclient
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
+;; make the fringe (gutter) bigger, in pixels (the default is 8, the prelude is 4)
+(if (fboundp 'fringe-mode)
+    (fringe-mode 6))
+
+;; Make mouse wheel / trackpad scrolling less jerky
+;;(setq mouse-wheel-scroll-amount '(0.001))
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ; one line at a time
+(setq mouse-wheel-progressive-speed nil) ; don't accelerate scrolling
+(setq mouse-wheel-follow-mouse 't) ; scroll window under mouse
+(setq scroll-step 1) ; keyboard scroll one line at a time
+
+;; when doing save, if dirs not exist, prompt create it.
+(add-hook 'before-save-hook
+          (lambda ()
+            (when buffer-file-name
+              (let ((dir (file-name-directory buffer-file-name)))
+                (when (and (not (file-exists-p dir))
+                           (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
+                  (make-directory dir t))))))
+
+;; eshell
+(setq eshell-cmpl-ignore-case t)
+
+;; markdown preview chinese
+(setq default-process-coding-system '(utf-8 . utf-8))
+
+;; javascript mode
+(setq js-indent-level 2)
+
+;; Set transparency
+(defun transparency (value)
+  "Sets the transparency of the frame window. 0=transparent/100=opaque"
+  (interactive "nTransparency Value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
+
+;; search ignore the case, if you specify the text in lower case
+(setq case-fold-search t)
+
+;; os x key binding
+(global-set-key (kbd "M-c") 'kill-ring-save)     ; was capitalize-word
+
+;; 80 column
+;; don't highlight long lines tail, which activated in prelude-editor.el
+(delq 'lines-tail whitespace-style)
+;; 高亮指定列
+;;(prelude-require-package 'column-marker)
+;; 一条竖线
+;; (prelude-require-package 'fill-column-indicator)
+
+;; hide terminal menu bar
+(menu-bar-mode -1)
+
+;; xml indent
+(setq nxml-child-indent 2)
+
+;; 禁用鼠标离开时自动保存
+(remove-hook 'mouse-leave-buffer-hook 'prelude-auto-save-command)
+
+;; theme
+;;(load-theme 'solarized-dark)
+;; (load-theme 'solarized-light)
+;; (load-theme 'zenburn)
 
 ;; 解决注释中中文字符乱码问题
 ;; Fix the garbage problem of Chinese characters in comments.
@@ -31,57 +101,33 @@ re-downloaded in order to locate PACKAGE."
 ;; CJK笔划：31C0-31EF
 (set-fontset-font (frame-parameter nil 'font) '(#x31C0 . #x31EF) '("SimSun" . "unicode-bmp"))
 
+;; Smex -- M-x enhancement
+(prelude-require-package 'smex)
+(global-set-key (kbd "M-x") 'smex)
+
+;; maximize frame when startup
+(prelude-require-package 'maxframe)
+(add-hook 'window-setup-hook 'maximize-frame t)
+
 ;; google translate
-(require-package 'google-translate)
+(prelude-require-package 'google-translate)
 (require 'google-translate)
 (global-set-key (kbd "C-t") 'google-translate-at-point)
 (global-set-key (kbd "M-t") 'google-translate-query-translate)
 (setq google-translate-default-source-language "en")
 (setq google-translate-default-target-language "zh-CN")
 
-;; 完全禁止beep
-(setq ring-bell-function (lambda () ()))
-
-;; Smex -- M-x enhancement
-(require-package 'smex)
-(global-set-key (kbd "M-x") 'smex)
-
-;; maximize frame when startup
-(require-package 'maxframe)
-(add-hook 'window-setup-hook 'maximize-frame t)
-
-;; hide scroll bar
-(when (fboundp 'toggle-scroll-bar) (toggle-scroll-bar -1))
-
-;; Allow access from emacsclient
-(require 'server)
-(unless (server-running-p)
-  (server-start))
-
-;; Make mouse wheel / trackpad scrolling less jerky
-;(setq mouse-wheel-scroll-amount '(0.001))
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ; one line at a time
-(setq mouse-wheel-progressive-speed nil) ; don't accelerate scrolling
-(setq mouse-wheel-follow-mouse 't) ; scroll window under mouse
-(setq scroll-step 1) ; keyboard scroll one line at a time
-
-;; markdown preview chinese
-(setq default-process-coding-system '(utf-8 . utf-8))
-
-;; javascript mode
-(setq js-indent-level 2)
-
 ;; org mode
 (require 'org)
 (setq org-list-indent-offset 2)
 (setq org-agenda-files '("~/logbook"))
-(setq org-tag-alist '(("java" . ?j) ("web" . ?w) ("linux" . ?l) ("text" . ?t) ("mac" . ?m) ("word" . ?e)))
+(setq org-tag-alist '(("java" . ?j) ("web" . ?w) ("linux" . ?l) ("text" . ?t) ("mac" . ?m) ("en_word") ("emacs" . ?e)))
 (setq org-startup-truncated nil)
 ;; M-<tab> is pcomplete
-(add-hook 'flyspell-mode-hook
-          (lambda ()
-              (define-key flyspell-mode-map (kbd "M-<tab>") nil)
-              (define-key flyspell-mode-map (kbd "C-M-i") nil)))
+;; (add-hook 'flyspell-mode-hook
+;;           (lambda ()
+;;               (define-key flyspell-mode-map (kbd "M-<tab>") nil)
+;;               (define-key flyspell-mode-map (kbd "C-M-i") nil)))
 ;; ‘a_b’ will not be interpreted as a subscript, but ‘a_{b}’ will.
 (setq org-use-sub-superscripts '{})
 ;; publishing
@@ -134,7 +180,7 @@ re-downloaded in order to locate PACKAGE."
          )
         ("org" :components ("logbook" "logbook-static"))))
 ;; org export html code highlight
-(require-package 'htmlize)
+(prelude-require-package 'htmlize)
 ;; org capture
 (setq org-directory "~/logbook")
 (setq org-default-notes-file (concat org-directory "/inbox.org"))
@@ -146,30 +192,9 @@ re-downloaded in order to locate PACKAGE."
          "* %?\nEntered on %U\n  %i\n  %a")))
 ;; org Embedded Latex
 
-;; make the fringe (gutter) bigger, in pixels (the default is 8, the prelude is 4)
-(if (fboundp 'fringe-mode)
-    (fringe-mode 6))
-
-;; Set transparency
-(defun transparency (value)
-  "Sets the transparency of the frame window. 0=transparent/100=opaque"
-  (interactive "nTransparency Value 0 - 100 opaque:")
-  (set-frame-parameter (selected-frame) 'alpha value))
-
-;; when doing save, if dirs not exist, prompt create it.
-(add-hook 'before-save-hook
-          (lambda ()
-            (when buffer-file-name
-              (let ((dir (file-name-directory buffer-file-name)))
-                (when (and (not (file-exists-p dir))
-                           (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
-                  (make-directory dir t))))))
-
-;; eshell
-(setq eshell-cmpl-ignore-case t)
 
 ;; Auto Complete
-(require-package 'auto-complete)
+(prelude-require-package 'auto-complete)
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories (expand-file-name "dict" prelude-personal-dir))
 (ac-config-default)
@@ -189,37 +214,3 @@ re-downloaded in order to locate PACKAGE."
                            ac-source-files-in-current-dir))
 ;; (add-hook 'eshell-mode-hook
 ;;           (lambda () (auto-complete-mode)))
-
-;; debug
-;; show backtrace when error
-;; (setq debug-on-error t)
-
-;; search ignore the case, if you specify the text in lower case
-(setq case-fold-search t)
-
-;; os x key binding
-(global-set-key (kbd "M-c") 'kill-ring-save)     ; was capitalize-word
-
-;; 80 column
-;; don't highlight long lines tail, which activated in prelude-editor.el
-(delq 'lines-tail whitespace-style)
-;; 高亮指定列
-;(require-package 'column-marker)
-;; 一条竖线
-;; (require-package 'fill-column-indicator)
-
-;; hide terminal menu bar
-(menu-bar-mode -1)
-
-;; xml indent
-(setq nxml-child-indent 2)
-
-;; theme
-;;(load-theme 'solarized-dark)
-;; (load-theme 'solarized-light)
-;; (load-theme 'zenburn)
-
-(remove-hook 'mouse-leave-buffer-hook 'prelude-auto-save-command)
-
-;; sudo-save
-;(require-package 'sudo-save)
