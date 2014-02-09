@@ -2,6 +2,17 @@
 ;; show backtrace when error
 (setq debug-on-error t)
 
+;; 设置set-mark-command按键C-S-SPC，避免和切换输入法冲突
+(global-set-key (kbd "C-S-SPC") 'set-mark-command)
+
+;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
+(setq w32-pass-lwindow-to-system nil
+      w32-pass-rwindow-to-system nil
+      w32-pass-apps-to-system nil
+      w32-lwindow-modifier 'super ; Left Windows key
+      w32-rwindow-modifier 'super ; Right Windows key
+      w32-apps-modifier 'hyper) ; Menu key
+
 ;; 关闭flx-ido-mode，因为按左右键选择文件或buffer时，Emacs无限占用内存，从几十M吃到2G多，最后死掉
 (flx-ido-mode -1)
 
@@ -19,9 +30,9 @@
 (when (fboundp 'toggle-scroll-bar) (toggle-scroll-bar -1))
 
 ;; Allow access from emacsclient
-(require 'server)
-(unless (server-running-p)
-  (server-start))
+;; (require 'server)
+;; (unless (server-running-p)
+;;   (server-start))
 
 ;; make the fringe (gutter) bigger, in pixels (the default is 8, the prelude is 4)
 (if (fboundp 'fringe-mode)
@@ -60,9 +71,6 @@
 
 ;; search ignore the case, if you specify the text in lower case
 (setq case-fold-search t)
-
-;; os x key binding
-(global-set-key (kbd "M-c") 'kill-ring-save)     ; was capitalize-word
 
 ;; 80 column
 ;; don't highlight long lines tail, which activated in prelude-editor.el
@@ -191,7 +199,6 @@
         ("j" "Journal" entry (file+datetree "~/logbook/inbox.org")
          "* %?\nEntered on %U\n  %i\n  %a")))
 ;; org Embedded Latex
-
 
 ;; Auto Complete
 (prelude-require-package 'auto-complete)
