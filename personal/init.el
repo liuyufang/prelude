@@ -121,7 +121,7 @@
 (require 'org)
 (setq org-list-indent-offset 2)
 (setq org-agenda-files '("~/logbook"))
-(setq org-tag-alist '(("java" . ?j) ("web" . ?w) ("linux" . ?l) ("text" . ?t) ("mac" . ?m) ("en_word") ("emacs" . ?e)))
+(setq org-tag-alist '(("java" . ?j) ("web" . ?w) ("linux" . ?l) ("text" . ?t) ("mac" . ?m) ("en_word") ("emacs" . ?e) ("程序设计") ("微博")))
 (setq org-startup-truncated nil)
 ;; M-<tab> is pcomplete
 ;; (add-hook 'flyspell-mode-hook
