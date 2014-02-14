@@ -1,27 +1,62 @@
-;; debug
 ;; show backtrace when error
 (setq debug-on-error t)
 
-;; 关闭flx-ido-mode，因为按左右键选择文件或buffer时，Emacs无限占用内存，从几十M吃到2G多，最后死掉
-(flx-ido-mode -1)
+;; for windows
+(when window-system
+  ;; 设置set-mark-command按键C-S-SPC，避免和切换输入法冲突
+  (global-set-key (kbd "C-S-SPC") 'set-mark-command)
 
-;; swap Command and Option
-;; (setq mac-command-modifier 'meta)
-;; (setq mac-option-modifier 'super)
-
-;; set font size, 13pt
-(set-face-attribute 'default nil :height 130)
-
-;; 完全禁止beep
-(setq ring-bell-function (lambda () ()))
-
-;; hide scroll bar
-(when (fboundp 'toggle-scroll-bar) (toggle-scroll-bar -1))
+  ;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
+  (setq w32-pass-lwindow-to-system nil
+        w32-pass-rwindow-to-system nil
+        w32-pass-apps-to-system nil
+        w32-lwindow-modifier 'super ; Left Windows key
+        w32-rwindow-modifier 'super ; Right Windows key
+        w32-apps-modifier 'hyper)) ; Menu key
 
 ;; Allow access from emacsclient
 (require 'server)
 (unless (server-running-p)
   (server-start))
+
+;; Smex -- M-x enhancement
+(prelude-require-package 'smex)
+(global-set-key (kbd "M-x") 'smex)
+
+;; 关闭flx-ido-mode，因为按左右键选择文件或buffer时，Emacs无限占用内存，从几十M吃到2G多，最后死掉
+(flx-ido-mode -1)
+
+;; search ignore the case, if you specify the text in lower case
+(setq case-fold-search t)
+
+;; 80 column
+;; don't highlight long lines tail, which activated in prelude-editor.el
+(delq 'lines-tail whitespace-style)
+;; 高亮指定列
+;;(prelude-require-package 'column-marker)
+;; 一条竖线
+;; (prelude-require-package 'fill-column-indicator)
+
+;; 禁用鼠标离开时自动保存
+(remove-hook 'mouse-leave-buffer-hook 'prelude-auto-save-command)
+
+;; when doing save, if dirs not exist, prompt create it.
+(add-hook 'before-save-hook
+          (lambda ()
+            (when buffer-file-name
+              (let ((dir (file-name-directory buffer-file-name)))
+                (when (and (not (file-exists-p dir))
+                           (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
+                  (make-directory dir t))))))
+
+;; 完全禁止beep
+(setq ring-bell-function (lambda () ()))
+
+;; hide terminal menu bar
+(menu-bar-mode -1)
+
+;; hide scroll bar
+(when (fboundp 'toggle-scroll-bar) (toggle-scroll-bar -1))
 
 ;; make the fringe (gutter) bigger, in pixels (the default is 8, the prelude is 4)
 (if (fboundp 'fringe-mode)
@@ -34,15 +69,6 @@
 (setq mouse-wheel-follow-mouse 't) ; scroll window under mouse
 (setq scroll-step 1) ; keyboard scroll one line at a time
 
-;; when doing save, if dirs not exist, prompt create it.
-(add-hook 'before-save-hook
-          (lambda ()
-            (when buffer-file-name
-              (let ((dir (file-name-directory buffer-file-name)))
-                (when (and (not (file-exists-p dir))
-                           (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
-                  (make-directory dir t))))))
-
 ;; eshell
 (setq eshell-cmpl-ignore-case t)
 
@@ -52,40 +78,26 @@
 ;; javascript mode
 (setq js-indent-level 2)
 
-;; Set transparency
-(defun transparency (value)
-  "Sets the transparency of the frame window. 0=transparent/100=opaque"
-  (interactive "nTransparency Value 0 - 100 opaque:")
-  (set-frame-parameter (selected-frame) 'alpha value))
-
-;; search ignore the case, if you specify the text in lower case
-(setq case-fold-search t)
-
-;; os x key binding
-(global-set-key (kbd "M-c") 'kill-ring-save)     ; was capitalize-word
-
-;; 80 column
-;; don't highlight long lines tail, which activated in prelude-editor.el
-(delq 'lines-tail whitespace-style)
-;; 高亮指定列
-;;(prelude-require-package 'column-marker)
-;; 一条竖线
-;; (prelude-require-package 'fill-column-indicator)
-
-;; hide terminal menu bar
-(menu-bar-mode -1)
-
 ;; xml indent
 (setq nxml-child-indent 2)
-
-;; 禁用鼠标离开时自动保存
-(remove-hook 'mouse-leave-buffer-hook 'prelude-auto-save-command)
 
 ;; theme
 ;;(load-theme 'solarized-dark)
 ;; (load-theme 'solarized-light)
 ;; (load-theme 'zenburn)
 
+;; maximize frame when startup
+(prelude-require-package 'maxframe)
+(add-hook 'window-setup-hook 'maximize-frame t)
+
+;; Set transparency
+(defun transparency (value)
+  "Sets the transparency of the frame window. 0=transparent/100=opaque"
+  (interactive "nTransparency Value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
+
+;; set font size, 13pt
+(set-face-attribute 'default nil :height 130)
 ;; 解决注释中中文字符乱码问题
 ;; Fix the garbage problem of Chinese characters in comments.
 ;; Set-fontset-font mast be after set-face-attribute
@@ -100,14 +112,6 @@
 (set-fontset-font (frame-parameter nil 'font) '(#x2E80 . #x2EFF) '("SimSun" . "unicode-bmp"))
 ;; CJK笔划：31C0-31EF
 (set-fontset-font (frame-parameter nil 'font) '(#x31C0 . #x31EF) '("SimSun" . "unicode-bmp"))
-
-;; Smex -- M-x enhancement
-(prelude-require-package 'smex)
-(global-set-key (kbd "M-x") 'smex)
-
-;; maximize frame when startup
-(prelude-require-package 'maxframe)
-(add-hook 'window-setup-hook 'maximize-frame t)
 
 ;; google translate
 (prelude-require-package 'google-translate)
@@ -192,7 +196,6 @@
          "* %?\nEntered on %U\n  %i\n  %a")))
 ;; org Embedded Latex
 
-
 ;; Auto Complete
 (prelude-require-package 'auto-complete)
 (require 'auto-complete-config)
@@ -212,5 +215,5 @@
                            ac-source-words-in-same-mode-buffers
                            ac-source-dictionary
                            ac-source-files-in-current-dir))
-;; (add-hook 'eshell-mode-hook
-;;           (lambda () (auto-complete-mode)))
+(add-hook 'eshell-mode-hook
+          (lambda () (auto-complete-mode)))
