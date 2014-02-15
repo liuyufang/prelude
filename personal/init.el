@@ -116,7 +116,6 @@
 
 ;; google translate
 (prelude-require-package 'google-translate)
-(require 'google-translate)
 (global-set-key (kbd "C-t") 'google-translate-at-point)
 (global-set-key (kbd "M-t") 'google-translate-query-translate)
 (setq google-translate-default-source-language "en")
