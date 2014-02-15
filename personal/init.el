@@ -2,7 +2,7 @@
 (setq debug-on-error t)
 
 ;; for windows
-(when window-system
+(when (eq system-type 'windows-nt)
   ;; 设置set-mark-command按键C-S-SPC，避免和切换输入法冲突
   (global-set-key (kbd "C-S-SPC") 'set-mark-command)
 
@@ -15,9 +15,10 @@
         w32-apps-modifier 'hyper)) ; Menu key
 
 ;; Allow access from emacsclient
-(require 'server)
-(unless (server-running-p)
-  (server-start))
+(when (not (eq system-type 'windows-nt))
+  (require 'server)
+  (unless (server-running-p)
+    (server-start)))
 
 ;; Smex -- M-x enhancement
 (prelude-require-package 'smex)
