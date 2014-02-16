@@ -14,7 +14,7 @@ Liu Wei Emacs Prelude
 ### 安装和配置Emacs
 
 1. 安装GNU Emacs 24.x，建议安装最新版本24.3
-2. 安装Git-1.7.11-preview20120710.exe，并设置git环境变量
+2. 安装Git-1.7.11-preview20120710.exe，设置git环境变量
 3. 安装[AutoHotkey](http://www.autohotkey.com)
 4. `git clone https://github.com/wei345/prelude.git path/to/user_home/.emacs.d`
 5. 双击运行.emacs.d/personal/windows-key-map.ahk，并将windows-key-map.ahk放到开始->所有程序->启动
@@ -24,34 +24,36 @@ Liu Wei Emacs Prelude
 
 ### 设置Windows输入法快捷键
 
-任务栏：在Windows屏幕最下面，整个长条
-通知区域：在任务栏最右侧，显示时间和小喇叭的区域
-语言栏：在通知区域旁边，显示：<语言><输入法>，如 `CH拼` `CH极` ，CH表示中文，EN表示英文
+名词：
 
-Windows输入法快捷键`Ctrl+Shift`和Emacs撤销`C-_`冲突，`Alt+Shift`和Emacs页首`M-S-,`、页尾`M-S-.`冲突。
+- 任务栏：在Windows屏幕最下面，整个长条
+- 通知区域：在任务栏最右侧，显示时间和小喇叭的区域
+- 语言栏：在通知区域旁边，显示：<语言><输入法>，如 `CH拼` `CH极` ，CH表示中文，EN表示英文
 
-解除`Ctrl+Shift`和`Alt+Shift`:
-在语言栏 -> 右键 -> 单击"设置"(进入"文字服务和输入语言"选项卡)
+冲突：
+
+- Windows输入法快捷键`Ctrl+Shift`和Emacs撤销`C-_`冲突
+- `Alt+Shift`和Emacs页首`M-S-,`页尾`M-S-.`冲突
+
+解决：
+
+- 解除`Ctrl+Shift`和`Alt+Shift`: 在语言栏 -> 右键 -> 单击"设置"(进入"文字服务和输入语言"选项卡)
 -> 单击"键设置"(进入"高级键设置"选项卡) -> 双击"在不同的输入语言之间切换"(进入"更改按键顺序"选项卡)
--> 取消勾选"切换输入语言"复选框 -> 取消勾选"切换键盘布局"复选框 -> 单击"确定"... -> 完成
-
-设置在两种输入法之间切换快捷键`Ctrl+Shift+Space`:
-在语言栏 -> 右键 -> 单击"设置"(进入"文字服务和输入语言"选项卡)
+-> 取消选中"切换输入语言"复选框 -> 取消选中"切换键盘布局"复选框 -> 单击"确定"... -> 完成
+- 设置在两种输入法之间切换快捷键`Ctrl+Shift+Space`: 在语言栏 -> 右键 -> 单击"设置"(进入"文字服务和输入语言"选项卡)
 -> 单击"键设置"(进入"高级键设置"选项卡) -> 双击"中文(简体)输入法 - 输入法/非输入法切换"(进入"更改按键顺序"选项卡)
--> 勾选"启用按键顺序"复选框 -> 选中"CTRL"单选按钮 -> 下拉列表选"Space" -> 点击"确定"... -> 完成
+-> 选中"启用按键顺序"复选框 -> 选中"CTRL"单选按钮 -> 下拉列表选"Space" -> 点击"确定"... -> 完成
 
 ### Keymap
 
 - Ctrl: Caps Lock或左Ctrl
 - C-SPC: Caps Lock + Space
-- 切换输入法: 左Ctrl+Space
+- 切换输入法: 左Ctrl+Space (被AutoHotkey映射到`Ctrl+Shift+Space`)，可能第一次需要用鼠标点击语言栏选择输入法
 - Super: Windows徽标键或`C-x @ s`(GNU Emacs的缺省配置)
 - hyper: `C-x @ h`
 - Caps Lock: 右Ctrl
 
 有些Windows徽标键快捷键组合被系统拦截，Emacs收不到，如Super-r, Super-d
-
-资料：http://ergoemacs.org/emacs/emacs_hyper_super_keys.html
 
 #### 实现方式
 
