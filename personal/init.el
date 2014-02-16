@@ -4,7 +4,7 @@
 ;; for windows
 (when (eq system-type 'windows-nt)
   ;; 设置set-mark-command按键C-S-SPC，避免和切换输入法冲突
-  (global-set-key (kbd "C-S-SPC") 'set-mark-command)
+  ;; (global-set-key (kbd "C-S-SPC") 'set-mark-command)
 
   ;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
   (setq w32-pass-lwindow-to-system nil
@@ -12,13 +12,15 @@
         w32-pass-apps-to-system nil
         w32-lwindow-modifier 'super ; Left Windows key
         w32-rwindow-modifier 'super ; Right Windows key
-        w32-apps-modifier 'hyper)) ; Menu key
+        w32-apps-modifier 'hyper) ; Menu key
+
+  (setq buffer-file-coding-system 'utf-8-unix)
+  (prefer-coding-system 'utf-8-unix))
 
 ;; Allow access from emacsclient
-(when (not (eq system-type 'windows-nt))
-  (require 'server)
-  (unless (server-running-p)
-    (server-start)))
+(require 'server)
+(unless (server-running-p)
+  (server-start))
 
 ;; Smex -- M-x enhancement
 (prelude-require-package 'smex)
