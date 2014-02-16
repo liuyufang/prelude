@@ -1,7 +1,7 @@
 Liu Wei Emacs Prelude
 =============
 
-这是我个人的Emacs配置，fork自[bbatsov/prelude](https://github.com/bbatsov/prelude)，修改了：
+这是我的Emacs配置，fork自[bbatsov/prelude](https://github.com/bbatsov/prelude)，修改了：
 
 - .gitignore
 - personal/
@@ -60,6 +60,22 @@ Liu Wei Emacs Prelude
 - 将Windows输入法快捷键设为Ctrl+Shift+Space
 - 用AutoHotkey将Caps Lock设为Ctrl，将右Ctrl设为Caps Lock
 - 用AutoHotkey将左Ctrl+Space设为Ctrl+Shift+Space
+
+### emacsclient
+
+e.bat:
+
+```
+@echo off
+"D:\Program Files\emacs-24.3\bin\emacsclient.exe" --server-file=server --alternate-editor=vim %*
+```
+
+vim.bat:
+
+```
+@echo off
+"D:\Program Files\Git\share\vim\vim73\vim" %*
+```
 
 Emacs Prelude
 =============
