@@ -12,7 +12,7 @@
         w32-pass-apps-to-system nil
         w32-lwindow-modifier 'super ; Left Windows key
         w32-rwindow-modifier 'super ; Right Windows key
-        w32-apps-modifier 'hyper) ; Menu key
+        w32-apps-modifier 'hyper)   ; Menu key
 
   (setq buffer-file-coding-system 'utf-8-unix)
   (prefer-coding-system 'utf-8-unix))
@@ -21,10 +21,6 @@
 (require 'server)
 (unless (server-running-p)
   (server-start))
-
-;; Smex -- M-x enhancement
-(prelude-require-package 'smex)
-(global-set-key (kbd "M-x") 'smex)
 
 ;; 关闭flx-ido-mode，因为按左右键选择文件或buffer时，Emacs无限占用内存，从几十M吃到2G多，最后死掉
 (flx-ido-mode -1)
